@@ -1,0 +1,18 @@
+Basic Url Config:
+
+"users": "http://127.0.0.1:8000/users/",
+"single user": "http://127.0.0.1:8000/users/<user_id/"  # same applies to other objects too
+"usage": "http://127.0.0.1:8000/usage/",
+"players": "http://127.0.0.1:8000/players/",
+"coaches": "http://127.0.0.1:8000/coaches/",
+"league-admins": "http://127.0.0.1:8000/league-admins/",
+"teams": "http://127.0.0.1:8000/teams/",
+"competitions": "http://127.0.0.1:8000/competitions/",
+"matches": "http://127.0.0.1:8000/matches/"
+
+Auth Url Config:
+"login": "http://127.0.0.1:8000/auth/login/"
+"logout": "http://127.0.0.1:8000/auth/logout/"
+
+For Fetching 90 percentile players in a team:
+"http://127.0.0.1:8000/teams/<team_id>/fetch_90_percentile/

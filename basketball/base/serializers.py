@@ -39,6 +39,13 @@ class PlayerSerializer(serializers.ModelSerializer):
         model = Player
         fields = ['user', 'height', 'average_score', 'number_of_caps', 'team']
         depth = 1
+    
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response.get('user').pop('password')
+        response.get('user').pop('groups')
+        response.get('user').pop('user_permissions')
+        return response
 
 
 class CoachSerializer(serializers.ModelSerializer):
@@ -50,12 +57,27 @@ class CoachSerializer(serializers.ModelSerializer):
     
     def get_team(self, obj):
         return obj.team.id
+    
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response.get('user').pop('password')
+        response.get('user').pop('groups')
+        response.get('user').pop('user_permissions')
+        return response
 
 
 class LeagueAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeagueAdmin
         fields = ['user']
+        depth = 1
+    
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response.get('user').pop('password')
+        response.get('user').pop('groups')
+        response.get('user').pop('user_permissions')
+        return response
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -63,7 +85,7 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team
         fields = '__all__'
         depth = 2
-
+    
 
 class CompetitionSerializer(serializers.ModelSerializer):
     class Meta:

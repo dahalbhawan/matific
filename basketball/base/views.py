@@ -9,13 +9,13 @@ from rest_framework.permissions import AllowAny
 from .models import Coach, Competition, LeagueAdmin, Match, Player, Usage, User, Team
 from .serializers import *
 from .utils.authentication import get_and_authenticate_user
-from .permissions import IsAuthorizedCoach, IsAuthorizedPlayer, IsAuthorizedUserBlockSafe, IsLeagueAdmin, IsLeagueAdminBlockSafe, IsPlayersCoach, IsSuperUser, IsTeamCoach
+from .permissions import AllowSafe, IsAuthorizedCoach, IsAuthorizedPlayer, IsAuthorizedUser, IsLeagueAdmin, IsLeagueAdmin, IsPlayersCoach, IsSuperUser, IsTeamCoach
 
 
 
 # users details should not even be visible to SAFE METHODS so permission classes that block safe methods are used
 class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsSuperUser | IsLeagueAdminBlockSafe | IsAuthorizedUserBlockSafe]
+    permission_classes = [IsSuperUser | IsLeagueAdmin | IsAuthorizedUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -27,7 +27,7 @@ class AuthViewSet(viewsets.GenericViewSet):
         'login': UserLoginSerializer,
     }
 
-    @action(methods=['POST', ], detail=False, permission_classes=[AllowAny])
+    @action(methods=['POST', ], detail=False)
     def login(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -36,7 +36,7 @@ class AuthViewSet(viewsets.GenericViewSet):
         login(request, user)
         return Response(data=data, status=status.HTTP_200_OK)
     
-    @action(methods=['POST', ], detail=False, permission_classes=[AllowAny])
+    @action(methods=['POST', ], detail=False)
     def logout(self, request):
         logout(request)
         data = {'details': 'Sucessfully logged out'}
@@ -89,16 +89,22 @@ class TeamViewSet(viewsets.ModelViewSet):
     serializer_class = TeamSerializer
     permission_classes = [IsTeamCoach | IsLeagueAdmin | IsSuperUser]
 
+    @action(methods=['GET'], detail=True, permission_classes=[IsTeamCoach])
+    def fetch_90_percentile(self, request, pk=None):
+        self.get_object()
+        players = Player.objects.ninty_percentile(pk)
+        data = PlayerSerializer(players, many=True).data
+        return Response(data, status=status.HTTP_200_OK)
+        
 
 class CompetitionViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsLeagueAdmin | IsSuperUser]
+    permission_classes = [IsLeagueAdmin | IsSuperUser | AllowSafe]
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
 
 
 class MatchViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsLeagueAdmin | IsSuperUser]
+    permission_classes = [IsLeagueAdmin | IsSuperUser | AllowSafe]
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
 
-    

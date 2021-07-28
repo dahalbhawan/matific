@@ -15,7 +15,7 @@ function Header({ currentUser, logoutCallback  }) {
 
     useEffect(() => {
         getTeam()
-    }, [])
+    }, [user])
 
     const logoutHandler = () => {
         setUser(null)
@@ -27,7 +27,7 @@ function Header({ currentUser, logoutCallback  }) {
         const response = await axios.get('/coaches/')
         const coaches = response.data
         for(let i=0; i<coaches.length; i++) {
-            if (coaches[i].user.id === user.id){
+            if (coaches[i].user.id === user?.id){
                 setTeam(coaches[i].team)
             }
         }

@@ -1,3 +1,4 @@
+from .querysets import PlayerQuerySet
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -29,7 +30,7 @@ class Player(models.Model):
     average_score = models.DecimalField(decimal_places=2, max_digits=5, blank=True, null=True)
     number_of_caps = models.IntegerField(blank=True, null=True)
     team = models.ForeignKey('Team', on_delete=models.SET_NULL, blank=True, null=True)
-
+    objects = PlayerQuerySet.as_manager()
 
 class Coach(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -45,7 +46,7 @@ class LeagueAdmin(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=100, unique=True)
     coach = models.OneToOneField(Coach, on_delete=models.SET_NULL, blank=True, null=True)
-    average_score = models.DecimalField(decimal_places=2, max_digits=5, blank=True, null=True)    
+    average_score = models.DecimalField(decimal_places=2, max_digits=5, blank=True, null=True)   
 
 
 class Competition(models.Model):
